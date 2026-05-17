@@ -163,7 +163,7 @@ export default function Studio() {
   const [jobs, setJobs] = useState<StudioJob[]>(loadPersistedJobs)
   const [prompt, setPrompt] = useState('')
   const [modelId, setModelId] = useState(DEFAULT_ARK_MODEL_ID)
-  const [duration, setDuration] = useState(5)
+  const [duration, setDuration] = useState(4)
   const [referenceImage, setReferenceImage] = useState<AttachedMedia | null>(null)
   const [referenceVideo, setReferenceVideo] = useState<AttachedMedia | null>(null)
   const [sending, setSending] = useState(false)
@@ -221,7 +221,7 @@ export default function Studio() {
     }
   }, [canUseReferenceVideo, referenceVideo])
 
-  // 仅开放 STUDIO_ENABLED_MODELS 时，纠正非法 modelId
+  // modelId 不在预设列表时回退默认（如历史 localStorage 脏数据）
   useEffect(() => {
     if (!STUDIO_ENABLED_MODELS.some((m) => m.id === modelId)) {
       setModelId(DEFAULT_ARK_MODEL_ID)
@@ -674,16 +674,20 @@ export default function Studio() {
               <span className="text-sm font-medium tracking-tight text-[var(--text-h)]">
                 视频创作
               </span>
-              <Tag
-                bordered={false}
-                className="!m-0 !rounded-md !border-0 !bg-[var(--accent-bg)] !px-1.5 !py-0 !text-[11px] !font-medium !leading-5 !text-[var(--accent)]"
-              >
-               仅仅限制  Seedance 1.5 Pro 使用 其他的模型暂未开放
-              </Tag>
-              <span className="mt-1 text-[11px] leading-4 text-[var(--text)]">
-                AI 视频生成 · 文字或参考图
-              </span>
+              {modelPreset && (
+                <Tag
+                  bordered={false}
+                  className="!m-0 !rounded-md !border-0 !bg-[var(--accent-bg)] !px-1.5 !py-0 !text-[11px] !font-medium !leading-5 !text-[var(--accent)]"
+                >
+                  {modelPreset.shortLabel}
+                </Tag>
+              )}
             </div>
+            <p className="mt-1 text-[11px] leading-4 text-[var(--text)]">
+              {canUseReferenceVideo
+                ? 'AI 视频生成 · 支持文字、参考图与参考视频（2.0）服务暂未开通'
+                : 'AI 视频生成 · 支持文字与参考图（1.5 Pro）'}
+            </p>
           </div>
         </div>
 
@@ -918,6 +922,7 @@ export default function Studio() {
                   options={STUDIO_ENABLED_MODELS.map((m) => ({
                     value: m.id,
                     label: m.shortLabel,
+                    title: m.description,
                   }))}
                 />
                 <Select

@@ -19,13 +19,11 @@ export const ARK_MODEL_PRESETS = [
 
 export const DEFAULT_ARK_MODEL_ID = ARK_MODEL_PRESETS[0].id
 
-/** 创作页当前对用户开放的模型（其余在 UI 中标注暂未开放） */
-export const STUDIO_ENABLED_MODELS = ARK_MODEL_PRESETS.filter(
-  (m) => m.id === DEFAULT_ARK_MODEL_ID,
-)
+/** 创作页可选模型列表 */
+export const STUDIO_ENABLED_MODELS = [...ARK_MODEL_PRESETS]
 
 export const ARK_DURATION_OPTIONS = Array.from({ length: 12 }, (_, i) => {
-  const sec = i + 4
+  const sec = i + 1
   return { value: sec, label: `${sec}s` }
 })
 
