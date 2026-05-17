@@ -1,0 +1,17 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    {
+      "source": "/api/ark/:path*",
+      "destination": "https://ark.cn-beijing.volces.com/api/v3/:path*"
+    },
+    {
+      "source": "/api/yobox/:path*",
+      "destination": "https://api.yoboxai.com/:path*"
+    },
+    {
+      "source": "/((?!api/).*)",
+      "destination": "/index.html"
+    }
+  ]
+}

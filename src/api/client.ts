@@ -1,5 +1,6 @@
 import { ArkApiError } from './errors'
 
+/** 默认走同源路径，由 Vite dev proxy 或 Vercel rewrites 转发到火山方舟 */
 const ARK_API_V3_PREFIX = '/api/ark'
 
 export interface ArkClientOptions {
@@ -7,7 +8,8 @@ export interface ArkClientOptions {
   apiKey?: string
   /**
    * API 根路径（不含 `/contents/...` 等具体路径）
-   * 开发环境默认 `/api/ark`（由 Vite 代理到 `https://ark.cn-beijing.volces.com/api/v3`）
+   * - 推荐：`/api/ark`（dev 用 Vite proxy，Vercel 用 vercel.json rewrites）
+   * - 也可：`https://ark.cn-beijing.volces.com/api/v3`（需上游开启 CORS，浏览器直连易失败）
    */
   baseUrl?: string
 }
@@ -35,7 +37,17 @@ function resolveBaseUrl(override?: string): string {
     override ??
     import.meta.env.VITE_ARK_BASE_URL ??
     ARK_API_V3_PREFIX
-  return base.replace(/\/$/, '')
+  const trimmed = base.replace(/\/$/, '')
+  if (
+    import.meta.env.PROD &&
+    trimmed.startsWith('http') &&
+    typeof window !== 'undefined'
+  ) {
+    console.warn(
+      '[ark] 生产环境使用跨域 baseUrl，可能触发 CORS；建议 VITE_ARK_BASE_URL=/api/ark 并配置 vercel.json 代理',
+    )
+  }
+  return trimmed
 }
 
 /** 发起方舟 API v3 请求 */

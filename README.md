@@ -90,6 +90,17 @@ npm run dev
 
 修改 `.env` 后需**重启** `npm run dev`。
 
+### Vercel 部署（重要）
+
+1. **Root Directory** 设为 `video-generation`（若从 monorepo 根目录导入项目）。
+2. 在 Vercel → Settings → Environment Variables 配置（Production / Preview 均勾选）：
+   - `VITE_ARK_API_KEY` = 你的方舟 Key
+   - `VITE_ARK_BASE_URL` = `/api/ark`（推荐，不要填火山完整域名，除非已处理 CORS）
+3. **保存后必须 Redeploy**：`VITE_*` 在 `npm run build` 时写入 JS，改环境变量不重新构建不会生效。
+4. 仓库已包含 [`vercel.json`](./vercel.json)，将 `/api/ark/*` 转发到 `https://ark.cn-beijing.volces.com/api/v3/*`（等价于本地 `vite.config.ts` 的 proxy）。
+
+生产环境请求形如 `https://你的域名/api/ark/contents/...` 是**预期行为**（同源 + 服务端转发），不是没读到环境变量。真正写入构建产物的是 `VITE_ARK_API_KEY`；`VITE_ARK_BASE_URL` 未设置时默认也是 `/api/ark`。
+
 ---
 
 ## 路由
@@ -164,7 +175,9 @@ src/
 | `/api/ark` | `https://ark.cn-beijing.volces.com/api/v3` |
 | `/api/yobox` | `https://api.yoboxai.com` |
 
-用于规避浏览器 CORS；生产部署需改为同源 BFF 或 Nginx 反代。
+用于规避浏览器 CORS。
+
+**Vercel 生产环境**：`vite.config.ts` 的 `server.proxy` **不会**随构建生效，请使用项目根目录 [`vercel.json`](./vercel.json) 的 `rewrites`（已配置）。
 
 ---
 
@@ -206,7 +219,26 @@ src/
 
 `tsconfig.app.json` 需开启 `strictNullChecks`（TanStack Router 要求）。
 
+### Vercel 上接口 404 / 仍像没走环境变量
+
+- 确认已部署含 `vercel.json` 的版本，且 `/api/ark` 未被 SPA 路由吞掉（`vercel.json` 中 API 规则在前）。
+- 确认 `VITE_ARK_API_KEY` 在 Vercel 里已配置并 **Redeploy**。
+- 不要把 `VITE_ARK_BASE_URL` 设为 `https://ark.cn-beijing.volces.com/...` 除非确认浏览器跨域可用；推荐保持 `/api/ark`。
+
 ---
+
+## 部署到 Vercel
+
+| 配置项 | 值 |
+|--------|-----|
+| Framework Preset | Vite |
+| Root Directory | `video-generation` |
+| Build Command | `npm run build` |
+| Output Directory | `dist` |
+| 环境变量 | `VITE_ARK_API_KEY`、`VITE_ARK_BASE_URL=/api/ark` |
+
+---
+
 
 ## 相关文档
 
