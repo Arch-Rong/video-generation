@@ -28,6 +28,12 @@ function RootLayout() {
           className="min-w-0 flex-1 !border-none !bg-transparent"
         />
         <Space>
+          {
+            import.meta.env.VITE_ARK_API_KEY
+          }
+          {
+            import.meta.env.VITE_ARK_BASE_URL
+          }
           <Button
             type="text"
             aria-label="切换主题"
