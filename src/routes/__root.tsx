@@ -1,6 +1,6 @@
 import { Link, Outlet, createRootRoute, useRouterState } from '@tanstack/react-router'
 import { Button, Menu, Space } from 'antd'
-import { MoonOutlined, SunOutlined } from '@ant-design/icons'
+import { GithubOutlined, MoonOutlined, SunOutlined } from '@ant-design/icons'
 import type { MenuProps } from 'antd'
 import { useAppTheme } from '../providers/AppTheme'
 
@@ -28,6 +28,14 @@ function RootLayout() {
           className="min-w-0 flex-1 !border-none !bg-transparent"
         />
         <Space>
+          <Button
+            type="text"
+            aria-label="GitHub 仓库"
+            icon={<GithubOutlined />}
+            href="https://github.com/Arch-Rong/video-generation"
+            target="_blank"
+            rel="noreferrer"
+          />
           <Button
             type="text"
             aria-label="切换主题"
