@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ant-design/icons": "~6.2.3",
     "@tailwindcss/vite": "^4.3.0",
     "@tanstack/react-router": "^1.170.1",
     "antd": "^6.4.2",
