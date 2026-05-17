@@ -274,9 +274,6 @@ function App() {
 
   return (
     <main className="api-test">
-        <h1 className="text-3xl font-bold underline">
-          Hello world!
-        </h1>
       <header className="api-test__header">
         <h1>视频生成 API 测试</h1>
         <p className="api-test__hint">
